@@ -1,0 +1,110 @@
+{
+
+  "tests_comments": [
+    {
+      "input": "color: red;/* This comment */",
+      "expected": "This comment"
+    },
+    {
+      "input": "color: red; /* This is a comment */",
+      "expected": "This is a comment"
+    },
+    {
+      "input": "color: red;",
+      "expected": ""
+    },
+    {
+      "input": "color: red;/* This is a comment */ /* Another comment */",
+      "expected": "This is a comment Another comment"
+    },
+    {
+      "input": "color: red; /*   This comment has spaces   */",
+      "expected": "This comment has spaces"
+    }
+  ],
+  "tests_hexa": [
+    {
+      "input": "color: #ff00aa;",
+      "expected": "ff00aa"
+    },
+    {
+      "input": "color: #FF00AA;",
+      "expected": "FF00AA"
+    },
+    {
+      "input": "color: #ff00aa; /* This is a comment */",
+      "expected": "ff00aa"
+    },
+    {
+      "input": "color: #FF00AA; /* This is a comment */",
+      "expected": "FF00AA"
+    },
+    {
+      "input": "color: #F0A;",
+      "expected": "F0A"
+    },
+    {
+      "input": "color: #F0A; /* This is a comment */",
+      "expected": "F0A"
+    },
+    {
+      "input": "color: #f0a;",
+      "expected": "f0a"
+    },
+    {
+      "input": "color: #f0a; /* This is a comment */",
+      "expected": "f0a"
+    },
+    {
+      "input": "color: #f0a; /* This is comment #ff00aa */",
+      "expected": "f0a"
+    }
+  ],
+  "tests_hexa_list": [
+    {
+      "input": "color: #f0a;",
+      "expected": ["f0a"]
+    },
+    {
+      "input": "color: #F0A;",
+      "expected": ["F0A"]
+    },
+    {
+      "input": "color: #f0a; /* This is a comment */",
+      "expected": ["f0a"]
+    },
+    {
+      "input": "color: #CC00FF; /* This is comment #ff00aa */",
+      "expected": ["CC00FF", "ff00aa"]
+    }
+  ],
+  "tests_color_name2rgb": [
+    {
+      "input": "red",
+      "expected": "255 000 000"
+    },
+    {
+      "input": "aqua",
+      "expected": "000 255 255"
+    },
+    {
+      "input": "yellowgreen",
+      "expected": "154 205 050"
+    }
+  ],
+
+  "tests_extract_color_named": [
+    {
+      "input": "color: red; /*   This comment has spaces   */",
+      "expected": ["255 000 000"]
+    },
+    {
+      "input": "color: aqua;",
+      "expected": ["000 255 255"]
+    },
+    {
+      "input": "color: unknown; /* red This is a comment */",
+      "expected": []
+    }
+  ]
+}
