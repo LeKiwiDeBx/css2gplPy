@@ -1,3 +1,4 @@
+import math
 import re
 import numpy as np
 
@@ -152,6 +153,7 @@ IDlistNameColor = {
     'yellowgreen': '9ACD32'
 }
 
+
 def extract_comment(line):
     pattern_comment = r';\s*/\*(.*)\*/'  # extract comment at line end
     match = re.search(pattern_comment, line)
@@ -186,11 +188,13 @@ def extract_hexa_list(line):
             r.append(hex_value[1])
     return np.array(r)
 
+
 def color_name2rgb(color_name):
-    res =  " ".join(re.findall(r"..", IDlistNameColor[color_name.lower()]))
+    res = " ".join(re.findall(r"..", IDlistNameColor[color_name.lower()]))
     rgb = [int(color, 16) for color in res.split(" ")]
     s_rgb = ' '.join(f'{value:03d}' for value in rgb)
     return s_rgb.strip()
+
 
 def extract_color_named(line):
     rgb = []
@@ -200,6 +204,120 @@ def extract_color_named(line):
             rgb.append(color_name2rgb(color_name))
 
     return rgb
+
+
+def remainder(x, y):
+    return x % y
+
+'''
+# Conversion valeur HSL à RGB
+# param: ligne en cours ddu fichier CSS
+# return: le format GPL de la couleur
+# sourcing:
+# + Converts HSL colorspace (Hue/Saturation/Value) to RGB colorspace.
+#         Formula from http://www.easyrgb.com/math.php?MATH=M19#text19
+# + un code source python ;)
+'''
+def hsl2Rgb(h, s, l):
+    
+    h = round(h / 360.0, 5)
+    s = round(s / 100.0, 5)
+    l = round(l / 100.0, 5)
+#si s=0 alors
+    r = g = b = l * 255.0
+
+    if s != 0.0:
+        var_2 = l * (1.0 + s) if l < 0.5 else (l + s) - (s * l)
+        var_1 = 2.0 * l - var_2
+        r = 255 * hue2rgb(var_1, var_2, h + (1.0 / 3.0))
+        g = 255 * hue2rgb(var_1, var_2, h)
+        b = 255 * hue2rgb(var_1, var_2, h - (1.0 / 3.0))
+
+    sRgb = f"{r:.0f} {g:.0f} {b:.0f}"
+    return sRgb.strip()
+
+'''
+# Sous-Routine de conversion valeur HSL à RGB appel de hsl2Rgb
+# param: traitemet pour obtenir HUE
+# return: valeur parametrée
+# sourcing:
+# + Converts HSL colorspace (Hue/Saturation/Value) to RGB colorspace.
+#      (obsolete)   Formula from http://www.easyrgb.com/math.php?MATH=M19#text19
+# + NEW! Formula from https://www.easyrgb.com/en/math.php
+# + un code source python ;)
+'''
+def hue2rgb(var_1, var_2, h):
+    if h < 0:
+        h += 1
+    if h > 1:
+        h -= 1
+    if 6 * h < 1:
+        return var_1 + (var_2 - var_1) * 6 * h
+    if 2 * h < 1:
+        return var_2
+    if 3 * h < 2:
+        return var_1 + (var_2 - var_1) * (2.0 / 3.0 - h) * 6
+    return var_1
+
+'''
+# Extrait du fichier CSS le format:
+# RGB strict: rgb(R%, G%, B%) ou rgba(R%, G%, B%, A%)
+# HSL strict: hsl(H~unitAngle, S%, L%) ou hsl(H~uAngle, S%, L%, A%)
+# RGB|HSL: rgb(R[0..255], G[0..255], B[0..255])
+#          rgba(R[0..255], G[0..255], B[0..255], A)
+#          hsl(H, S%, L%)
+#          hsla(H, S%, L%, A)
+# param: ligne en cours du fichier CSS
+# return: le format GPL de la couleur
+'''
+def extractRgbHsl(line):
+    patternStrictRgb = r'(rgb)a?\(\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%.*\)'
+    patternStrictHsl = r'(?:hsl)a?\(\s*(\d*?\.?\d*)(deg|grad|rad|turn)\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%.*\)'
+    patternRgbHsl = r'(rgb|hsl)a?\(\s*(\d{1,3})\s*,\s*(\d{1,3})%?\s*,\s*(\d{1,3})%?.*\)'
+
+    match = ""
+    sRgb = ""
+    sHsl = ""
+    Rgb = []
+    sCmt = ""  # commentaire
+
+    # pattern strict Rgb avec % -> 0..255 arrondi
+    if re.search(patternStrictRgb, line):
+        t, r, g, b = re.findall(patternStrictRgb, line)[0]
+        r, g, b = float(r) * 2.55, float(g) * 2.55, float(b) * 2.55
+        sRgb = f"{r:3.0f} {g:3.0f} {b:3.0f}"  # arrondi float
+        sRgb = sRgb.strip()
+        return sRgb
+
+    # pattern strict Hsl $u=$2:deg-grad-rad-turn -> deg
+    if re.search(patternStrictHsl, line):
+        h, u, s, l = re.findall(patternStrictHsl, line)[0]
+        h = float(h)
+        if u == 'deg':
+            h = 360 * remainder(h, 360.0)
+        elif u == 'grad':
+            h = 360 * remainder(h * (180.0 / 200.0), 360)
+        elif u == 'rad':
+            h = 360 * remainder(h * 180.0 / math.pi, 360.0)
+        elif u == 'turn':
+            h = 360 * remainder(h * 360.0, 360)
+        else:  # degré par defaut
+            h = 360 * remainder(h, 360.0)
+        sRgb = hsl2Rgb(h, s, l)
+        sRgb = sRgb.strip()
+        return sRgb
+
+    if re.search(patternRgbHsl, line):
+        t, r, g, b = re.findall(patternRgbHsl, line)[0]
+        r, g, b = int(r), int(g), int(b)
+        if t == 'rgb':
+            sRgb = f"{r:3d} {g:3d} {b:3d}"
+        elif t == 'hsl':  # les positions r g b correspond h s l
+            sRgb = hsl2Rgb(r, g, b)
+        sRgb = sRgb.strip()
+        return sRgb
+    else:
+        return ""
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import json
 import unittest
 
 from numpy.testing import assert_array_equal
-from css2gpl import extract_comment, extract_hexa, extract_hexa_list, color_name2rgb, extract_color_named
+from css2gpl import extract_comment, extract_hexa, extract_hexa_list, color_name2rgb, extract_color_named, hsl2Rgb
 
 class TestExtractComment(unittest.TestCase):
     def setUp(self):
@@ -50,6 +50,13 @@ class TestExtractComment(unittest.TestCase):
             expected_output = test_case['expected']
             assert_array_equal(extract_color_named(input_css), expected_output)
 
+    def test_hsl2Rgb(self):
+        for test_case in self.test_data['tests_hsl2Rgb']:
+            input_h = test_case['h']
+            input_s = test_case['s']
+            input_l = test_case['l']
+            expected_output = test_case['expected']
+            self.assertEqual(hsl2Rgb(input_h, input_s, input_l), expected_output)
 
 if __name__ == "__main__":
     unittest.main()

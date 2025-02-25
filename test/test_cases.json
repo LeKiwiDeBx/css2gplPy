@@ -1,5 +1,4 @@
 {
-
   "tests_comments": [
     {
       "input": "color: red;/* This comment */",
@@ -63,19 +62,28 @@
   "tests_hexa_list": [
     {
       "input": "color: #f0a;",
-      "expected": ["f0a"]
+      "expected": [
+        "f0a"
+      ]
     },
     {
       "input": "color: #F0A;",
-      "expected": ["F0A"]
+      "expected": [
+        "F0A"
+      ]
     },
     {
       "input": "color: #f0a; /* This is a comment */",
-      "expected": ["f0a"]
+      "expected": [
+        "f0a"
+      ]
     },
     {
       "input": "color: #CC00FF; /* This is comment #ff00aa */",
-      "expected": ["CC00FF", "ff00aa"]
+      "expected": [
+        "CC00FF",
+        "ff00aa"
+      ]
     }
   ],
   "tests_color_name2rgb": [
@@ -92,19 +100,66 @@
       "expected": "154 205 050"
     }
   ],
-
   "tests_extract_color_named": [
     {
       "input": "color: red; /*   This comment has spaces   */",
-      "expected": ["255 000 000"]
+      "expected": [
+        "255 000 000"
+      ]
     },
     {
       "input": "color: aqua;",
-      "expected": ["000 255 255"]
+      "expected": [
+        "000 255 255"
+      ]
     },
     {
       "input": "color: unknown; /* red This is a comment */",
       "expected": []
+    }
+  ],
+  "tests_hsl2Rgb": [
+    {
+      "h": 0,
+      "s": 0,
+      "l": 0,
+      "expected": "0 0 0"
+    },
+    {
+      "h": 0,
+      "s": 0,
+      "l": 100,
+      "expected": "255 255 255"
+    },
+    {
+      "h": 0,
+      "s": 0,
+      "l": 75,
+      "expected": "191 191 191"
+    },
+    {
+      "h": 0,
+      "s": 100,
+      "l": 50,
+      "expected": "255 0 0"
+    },
+    {
+      "h": 120,
+      "s": 100,
+      "l": 50,
+      "expected": "0 255 0"
+    },
+    {
+      "h": 240,
+      "s": 100,
+      "l": 50,
+      "expected": "0 0 255"
+    },
+    {
+      "h": 240,
+      "s": 100,
+      "l": 25,
+      "expected": "0 0 128"
     }
   ]
 }
