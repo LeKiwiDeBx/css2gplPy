@@ -5,6 +5,7 @@ import unittest
 
 from numpy.testing import assert_array_equal
 from css2gpl import extract_comment, extract_hexa, extract_hexa_list, color_name2rgb, extract_color_named, hsl2Rgb
+from css2gpl import extractRgbHsl
 
 class TestExtractComment(unittest.TestCase):
     def setUp(self):
@@ -16,14 +17,12 @@ class TestExtractComment(unittest.TestCase):
             input_css = test_case['input']
             expected_output = test_case['expected']
             self.assertEqual(extract_comment(input_css), expected_output)
-    
-    
+
     def test_extract_hexa(self):
         for test_case in self.test_cases:
             input_css = test_case['input']
             expected_output = test_case['expected']
             self.assertEqual(extract_hexa(input_css), expected_output)
-
 
     def test_extract_hexa(self):
         for test_case in self.test_data['tests_hexa']:
@@ -43,7 +42,6 @@ class TestExtractComment(unittest.TestCase):
             expected_output = test_case['expected']
             self.assertEqual(color_name2rgb(input_css), expected_output)
 
-
     def test_extract_color_named(self):
         for test_case in self.test_data['tests_extract_color_named']:
             input_css = test_case['input']
@@ -56,7 +54,16 @@ class TestExtractComment(unittest.TestCase):
             input_s = test_case['s']
             input_l = test_case['l']
             expected_output = test_case['expected']
-            self.assertEqual(hsl2Rgb(input_h, input_s, input_l), expected_output)
+            self.assertEqual(
+                hsl2Rgb(input_h, input_s, input_l), expected_output)
+
+
+    def test_extractRgbHsl(self):
+        for test_case in self.test_data['tests_extract_hsl_only']:
+            input_css = test_case['input']
+            expected_output = test_case['expected']
+            self.assertEqual(extractRgbHsl(input_css), expected_output)
+
 
 if __name__ == "__main__":
     unittest.main()

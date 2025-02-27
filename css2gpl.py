@@ -209,6 +209,7 @@ def extract_color_named(line):
 def remainder(x, y):
     return x % y
 
+
 '''
 # Conversion valeur HSL à RGB
 # param: ligne en cours ddu fichier CSS
@@ -218,23 +219,28 @@ def remainder(x, y):
 #         Formula from http://www.easyrgb.com/math.php?MATH=M19#text19
 # + un code source python ;)
 '''
+
+
 def hsl2Rgb(h, s, l):
-    
+
     h = round(h / 360.0, 5)
     s = round(s / 100.0, 5)
     l = round(l / 100.0, 5)
-#si s=0 alors
+# si s=0 alors
     r = g = b = l * 255.0
 
     if s != 0.0:
         var_2 = l * (1.0 + s) if l < 0.5 else (l + s) - (s * l)
+        # q = l * (1 + s) if l < 0.5 else l + s - l * s
         var_1 = 2.0 * l - var_2
+        # p = 2 * l - q
         r = 255 * hue2rgb(var_1, var_2, h + (1.0 / 3.0))
         g = 255 * hue2rgb(var_1, var_2, h)
         b = 255 * hue2rgb(var_1, var_2, h - (1.0 / 3.0))
 
     sRgb = f"{r:.0f} {g:.0f} {b:.0f}"
     return sRgb.strip()
+
 
 '''
 # Sous-Routine de conversion valeur HSL à RGB appel de hsl2Rgb
@@ -246,11 +252,14 @@ def hsl2Rgb(h, s, l):
 # + NEW! Formula from https://www.easyrgb.com/en/math.php
 # + un code source python ;)
 '''
+
+
 def hue2rgb(var_1, var_2, h):
-    if h < 0:
-        h += 1
-    if h > 1:
-        h -= 1
+    h = h % 1
+    while h < 0.0:
+        h += 1.0
+    while h > 1.0:
+        h -= 1.0
     if 6 * h < 1:
         return var_1 + (var_2 - var_1) * 6 * h
     if 2 * h < 1:
@@ -258,6 +267,7 @@ def hue2rgb(var_1, var_2, h):
     if 3 * h < 2:
         return var_1 + (var_2 - var_1) * (2.0 / 3.0 - h) * 6
     return var_1
+
 
 '''
 # Extrait du fichier CSS le format:
@@ -270,18 +280,24 @@ def hue2rgb(var_1, var_2, h):
 # param: ligne en cours du fichier CSS
 # return: le format GPL de la couleur
 '''
-def extractRgbHsl(line):
-    patternStrictRgb = r'(rgb)a?\(\s*(\d{1,3})%\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%.*\)'
-    patternStrictHsl = r'(?:hsl)a?\(\s*(\d*?\.?\d*)(deg|grad|rad|turn)\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%.*\)'
-    patternRgbHsl = r'(rgb|hsl)a?\(\s*(\d{1,3})\s*,\s*(\d{1,3})%?\s*,\s*(\d{1,3})%?.*\)'
 
+
+def extractRgbHsl(line):
+    # en CSS4 la virgule est facultative par exemple: rgb(R% G% B% / A)
+    patternStrictRgb = r'(rgb)a?\(\s*(\d{1,3})%\s*,?\s*(\d{1,3})%\s*,?\s*(\d{1,3})%.*\)'
+    # ajout de ? apres deg|grad|rad|turn car cette unité est optionnelle
+    patternStrictHsl = r'(?:hsl)a?\(\s*(\d*?\.?\d*)(deg|grad|rad|turn)?\s*,\s*(\d{1,3})%\s*,\s*(\d{1,3})%.*\)'
+    # admet un nombre decimal pour le hsl comme 0.5 ou .5 ou 100.0 et les nombres entiers
+    patternRgbHsl = r'(rgb|hsl)a?\(\s*(\d{0,3}(?:\.\d*)?)\s*,\s*(\d{1,3})%?\s*,\s*(\d{1,3})%?.*\)'
+    # ancienne version:
+    # patternRgbHsl = r'(rgb|hsl)a?\(\s*(\d{1,3})\s*,\s*(\d{1,3})%?\s*,\s*(\d{1,3})%?.*\)'
     match = ""
     sRgb = ""
     sHsl = ""
     Rgb = []
     sCmt = ""  # commentaire
 
-    # pattern strict Rgb avec % -> 0..255 arrondi
+    # pattern strict Rgb avec % sur tout les composants meme 0% -> 0..255 arrondi
     if re.search(patternStrictRgb, line):
         t, r, g, b = re.findall(patternStrictRgb, line)[0]
         r, g, b = float(r) * 2.55, float(g) * 2.55, float(b) * 2.55
@@ -292,17 +308,23 @@ def extractRgbHsl(line):
     # pattern strict Hsl $u=$2:deg-grad-rad-turn -> deg
     if re.search(patternStrictHsl, line):
         h, u, s, l = re.findall(patternStrictHsl, line)[0]
-        h = float(h)
+        h, s, l = float(h), float(s), float(l)
         if u == 'deg':
-            h = 360 * remainder(h, 360.0)
+            # h = 360 * remainder(h, 360.0)
+            h = h % 360.0
         elif u == 'grad':
-            h = 360 * remainder(h * (180.0 / 200.0), 360)
+            # h = 360 * remainder(h * (180.0 / 200.0), 360)
+            h = h * (180.0 / 200.0) % 360.0
         elif u == 'rad':
-            h = 360 * remainder(h * 180.0 / math.pi, 360.0)
+            # h = 360 * remainder(h * 180.0 / math.pi, 360.0)
+            h = h * (180.0 / math.pi) % 360.0
         elif u == 'turn':
-            h = 360 * remainder(h * 360.0, 360)
+            # h = 360 * remainder(h * 360.0, 360)
+            h = h * 360.0 % 360
+
         else:  # degré par defaut
-            h = 360 * remainder(h, 360.0)
+            # h = 360 * remainder(h, 360.0)
+            h = h % 360.0
         sRgb = hsl2Rgb(h, s, l)
         sRgb = sRgb.strip()
         return sRgb
