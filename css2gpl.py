@@ -321,7 +321,6 @@ def extractRgbHsl(line):
         elif u == 'turn':
             # h = 360 * remainder(h * 360.0, 360)
             h = h * 360.0 % 360
-
         else:  # degré par defaut
             # h = 360 * remainder(h, 360.0)
             h = h % 360.0
@@ -340,7 +339,58 @@ def extractRgbHsl(line):
         return sRgb
     else:
         return ""
+'''
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# Conversion valeurs hexadecimales to RGB
+# param: code hexadecimal de la couleur
+# return: le format GPL de la couleur
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    sub hexa2rgb {
+          my $hexa = shift @_;
+          my @rgb;
+          my $sRgb;
+          if ( length($hexa) == 6 ) {
+              push @rgb, substr( $hexa, 0, 2 ), substr( $hexa, 2, 2 ),
+                substr( $hexa, 4, 2 );
 
+              #debug BEGIN
+              # test s//eg  TEST OK!
+              # $hexa =~ s/([[:xdigit:]]{2})/sprintf "%03d ",hex $1/eg ;
+              # $hexa =~ s/^\s+|\s+$//g ;
+              # print "\ntest : |", $hexa , "|" ;
+              #debug END
+          }
+          elsif ( length($hexa) == 3 ) {
+              push @rgb, substr( $hexa, 0, 1 ) x 2, substr( $hexa, 1, 1 ) x 2,
+                substr( $hexa, 2, 1 ) x 2;
+
+         #print "\nhexa2rgb 3 digit ", $rgb[0] . " " . $rgb[1] . " " . $rgb[2] ;
+          }
+          else { return $sRgb; }
+          foreach (@rgb) {
+              $sRgb .= sprintf( "%03d ", hex $_ );
+          }
+          $sRgb =~ s/^\s+|\s+$//g;    #trim blanc debut et final
+          return $sRgb;
+    }
+#PYTHON DRAFT
+def hexa2rgb(hexa):
+    rgb = []
+    sRgb = ""
+    if len(hexa) == 6:
+        rgb.extend([hexa[i:i+2] for i in range(0, 6, 2)])
+    elif len(hexa) == 3:
+        rgb.extend([hexa[i] * 2 for i in range(3)])
+    else:
+        return sRgb
+    
+    for value in rgb:
+        sRgb += f"{int(value, 16):03d} "
+    
+    sRgb = sRgb.strip()
+    return sRgb
+'''
 
 if __name__ == "__main__":
     print(extract_comment("color:red; /* test */"))
