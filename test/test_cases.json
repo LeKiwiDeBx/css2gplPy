@@ -165,39 +165,45 @@
   "tests_extractRgbHsl": [
     {
       "input": "color: rgb(100%, 0%, 0%); /*   This comment has spaces   */",
-      "expected":"255   0   0"
+      "expected": "255   0   0"
     },
     {
       "input": "color: rgb(33%, 0%, 0%); /*   This comment has spaces   */",
-      "expected":"84   0   0"
+      "expected": "84   0   0"
     },
     {
       "input": "color: rgb(33% 0% 0%); /*   sans virgule   */",
-      "expected":"84   0   0"
+      "expected": "84   0   0"
     },
     {
       "input": "color: hsl(100deg, 75%, 50%); /*   This comment has spaces   */",
-      "expected":"96 223 32"
+      "expected": "96 223 32"
+    },
+    {
+      "input": "color: hsla(1.5, 45%, 90%, 0.5); /*   This comment has spaces   */",
+      "expected": "241 219 218"
+    },
+    {
+      "input": "color:hsl(60, 82%, 43;",
+      "expected": "200 200 20"
     }
-
   ],
   "tests_extract_hsl_only": [
     {
       "input": "color: hsl(100, 75%, 50%); /*   This comment has spaces   */",
-      "expected":"96 223 32"
+      "expected": "96 223 32"
     },
     {
       "input": "color: hsl(111grad, 75%, 50%); /*   This comment has spaces   */",
-      "expected":"96 223 32"
+      "expected": "96 223 32"
     },
     {
       "input": "color: hsl(1.745rad, 75%, 50%); /*   This comment has spaces   */",
-      "expected":"96 223 32"
+      "expected": "96 223 32"
     },
     {
       "input": "color: hsl(0.5turn, 75%, 50%); /*   This comment has spaces   */",
-      "expected":"32 223 223"
+      "expected": "32 223 223"
     }
-
   ]
 }

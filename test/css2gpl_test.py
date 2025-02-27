@@ -7,6 +7,7 @@ from numpy.testing import assert_array_equal
 from css2gpl import extract_comment, extract_hexa, extract_hexa_list, color_name2rgb, extract_color_named, hsl2Rgb
 from css2gpl import extractRgbHsl
 
+
 class TestExtractComment(unittest.TestCase):
     def setUp(self):
         with open('test/test_cases.json') as f:
@@ -57,9 +58,8 @@ class TestExtractComment(unittest.TestCase):
             self.assertEqual(
                 hsl2Rgb(input_h, input_s, input_l), expected_output)
 
-
     def test_extractRgbHsl(self):
-        for test_case in self.test_data['tests_extract_hsl_only']:
+        for test_case in self.test_data['tests_extractRgbHsl']:
             input_css = test_case['input']
             expected_output = test_case['expected']
             self.assertEqual(extractRgbHsl(input_css), expected_output)
