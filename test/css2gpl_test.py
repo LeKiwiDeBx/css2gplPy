@@ -5,7 +5,7 @@ import unittest
 
 from numpy.testing import assert_array_equal
 from css2gpl import extract_comment, extract_hexa, extract_hexa_list, color_name2rgb, extract_color_named, hsl2Rgb
-from css2gpl import extractRgbHsl
+from css2gpl import extractRgbHsl, hexa2rgb
 
 
 class TestExtractComment(unittest.TestCase):
@@ -64,6 +64,11 @@ class TestExtractComment(unittest.TestCase):
             expected_output = test_case['expected']
             self.assertEqual(extractRgbHsl(input_css), expected_output)
 
+    def test_hexa2rgb(self):
+        for test_case in self.test_data['tests_hexa2rgb']:
+            input_css = test_case['input']
+            expected_output = test_case['expected']
+            self.assertEqual(hexa2rgb(input_css), expected_output)
 
 if __name__ == "__main__":
     unittest.main()

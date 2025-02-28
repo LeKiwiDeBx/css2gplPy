@@ -184,7 +184,7 @@
       "expected": "241 219 218"
     },
     {
-      "input": "color:hsl(60, 82%, 43;",
+      "input": "color:hsl(60, 82%, 43);",
       "expected": "200 200 20"
     }
   ],
@@ -204,6 +204,24 @@
     {
       "input": "color: hsl(0.5turn, 75%, 50%); /*   This comment has spaces   */",
       "expected": "32 223 223"
+    }
+  ],
+  "tests_hexa2rgb": [
+    {
+      "input": "ff00aa",
+      "expected": "255 000 170"
+    },
+    {
+      "input": "FF00AA",
+      "expected": "255 000 170"
+    },
+    {
+      "input": "F0A",
+      "expected": "255 000 170"
+    },
+    {
+      "input": "f0a",
+      "expected": "255 000 170"
     }
   ]
 }

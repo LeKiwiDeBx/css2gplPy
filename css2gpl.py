@@ -339,42 +339,15 @@ def extractRgbHsl(line):
         return sRgb
     else:
         return ""
-'''
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # Conversion valeurs hexadecimales to RGB
 # param: code hexadecimal de la couleur
 # return: le format GPL de la couleur
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    sub hexa2rgb {
-          my $hexa = shift @_;
-          my @rgb;
-          my $sRgb;
-          if ( length($hexa) == 6 ) {
-              push @rgb, substr( $hexa, 0, 2 ), substr( $hexa, 2, 2 ),
-                substr( $hexa, 4, 2 );
 
-              #debug BEGIN
-              # test s//eg  TEST OK!
-              # $hexa =~ s/([[:xdigit:]]{2})/sprintf "%03d ",hex $1/eg ;
-              # $hexa =~ s/^\s+|\s+$//g ;
-              # print "\ntest : |", $hexa , "|" ;
-              #debug END
-          }
-          elsif ( length($hexa) == 3 ) {
-              push @rgb, substr( $hexa, 0, 1 ) x 2, substr( $hexa, 1, 1 ) x 2,
-                substr( $hexa, 2, 1 ) x 2;
 
-         #print "\nhexa2rgb 3 digit ", $rgb[0] . " " . $rgb[1] . " " . $rgb[2] ;
-          }
-          else { return $sRgb; }
-          foreach (@rgb) {
-              $sRgb .= sprintf( "%03d ", hex $_ );
-          }
-          $sRgb =~ s/^\s+|\s+$//g;    #trim blanc debut et final
-          return $sRgb;
-    }
-#PYTHON DRAFT
 def hexa2rgb(hexa):
     rgb = []
     sRgb = ""
@@ -384,13 +357,62 @@ def hexa2rgb(hexa):
         rgb.extend([hexa[i] * 2 for i in range(3)])
     else:
         return sRgb
-    
+
     for value in rgb:
         sRgb += f"{int(value, 16):03d} "
-    
+
     sRgb = sRgb.strip()
     return sRgb
-'''
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# Converti le rgb format gpl en hexa pour l'inclure dans le commentaire
+# param: le color rgb 255 255 255 format gpl
+# return: en format hexa ABCDEF
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+def rgb2hexa(rgb):
+    # Remove leading zeros from each component
+    rgb = re.sub(r'(?:0{0,2})(\d+)', r'\1', rgb)
+    r, g, b = map(int, rgb.split())
+    hexa = f"{r:02X}{g:02X}{b:02X}"  # Format as 2-digit hexadecimal
+    return hexa
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# Converti rgb en hsv (HSV Hue Saturation Value ou  TSV Teinte Saturation Valeur)
+# Pour faire un tri sur h,s ou v
+# param: le color rgb 255 255 255 format gpl
+# return: une liste (h,s,v)
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+def rgb2hsv(rgb):
+    red, green, blue = rgb
+    rgbs = sorted([red, green, blue])
+    minc, maxc = rgbs[0], rgbs[-1]
+    v = maxc / 255.0
+    if minc == maxc:
+        return (0.0, 0.0, round(v * 100, 1))
+    deltac = maxc - minc
+    s = deltac / maxc
+    # Calcul de la teinte (Hue)
+    if deltac == 0:
+        h = 0  # Teinte indéfinie pour les couleurs grises (delta=0)
+    elif maxc == red:
+        h = 60 * (((green - blue) / deltac) % 6)
+    elif maxc == green:
+        h = 60 * (((blue - red) / deltac) + 2)
+    else:  # c_max == blue
+        h = 60 * (((red - green) / deltac) + 4)
+
+    if h < 0:
+        h += 360
+    h = round(h, 1)
+    s = round(s * 100, 1)
+    v = round(v * 100, 1)
+    return (h, s, v)
+
 
 if __name__ == "__main__":
     print(extract_comment("color:red; /* test */"))
