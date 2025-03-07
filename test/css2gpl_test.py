@@ -70,5 +70,16 @@ class TestExtractComment(unittest.TestCase):
             expected_output = test_case['expected']
             self.assertEqual(hexa2rgb(input_css), expected_output)
 
+    def test_loadfilecss(self):
+        with self.assertRaises(Exception) as e:
+            loadfilecss(None)
+        self.assertEqual(str(e.exception), "file name css unknown.")
+
+    def test_raise_ioerror(self):
+        non_existent_file = 'non_existent_file.css'
+        with self.assertRaises(Exception) as e:
+            loadfilecss(non_existent_file)
+        self.assertIn('failed to open file', str(e.exception))
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,8 @@
 import math
 import re
 import numpy as np
+import os
+from datetime import datetime
 
 IDlistNameColor = {
     'aliceblue': 'F0F8FF',
@@ -413,6 +415,26 @@ def rgb2hsv(rgb):
     v = round(v * 100, 1)
     return (h, s, v)
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# Ouvre en lecture le fichier CSS à analyser
+# param: nom du fichier
+# return:
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+# A TESTER attendre GIMP 3.0
+def loadfilecss(f):
+    if f is not None:
+        print(f"\nsearching file : {os.path.basename(f)}\n")
+        try:
+            with open(f, "r") as fcss:
+                print(f"open file {f}\n")
+                gimp_message(f)
+        except IOError:
+            raise Exception(
+                f"failed to open file {f}: {os.strerror(os.errno)}")
+    else:
+        raise Exception("file name css unknown.")
+ 
 if __name__ == "__main__":
     print(extract_comment("color:red; /* test */"))
