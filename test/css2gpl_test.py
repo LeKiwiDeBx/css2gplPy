@@ -81,5 +81,6 @@ class TestExtractComment(unittest.TestCase):
             loadfilecss(non_existent_file)
         self.assertIn('failed to open file', str(e.exception))
 
+
 if __name__ == "__main__":
     unittest.main()

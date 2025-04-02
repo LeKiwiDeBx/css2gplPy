@@ -1,8 +1,17 @@
-import math
-import re
-import numpy as np
-import os
 from datetime import datetime
+import os
+import numpy as np
+import re
+import math
+from gi.repository import GLib
+from gi.repository import GimpUi
+from gi.repository import Gimp
+import sys
+
+import gi
+gi.require_version('Gimp', '3.0')
+gi.require_version('GimpUi', '3.0')
+
 
 IDlistNameColor = {
     'aliceblue': 'F0F8FF',
@@ -423,6 +432,8 @@ def rgb2hsv(rgb):
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # A TESTER attendre GIMP 3.0
+
+
 def loadfilecss(f):
     if f is not None:
         print(f"\nsearching file : {os.path.basename(f)}\n")
@@ -435,6 +446,13 @@ def loadfilecss(f):
                 f"failed to open file {f}: {os.strerror(os.errno)}")
     else:
         raise Exception("file name css unknown.")
- 
-if __name__ == "__main__":
-    print(extract_comment("color:red; /* test */"))
+
+class css2gplPlugin(Gimp.Plugin):
+    def run(self, procedure, run_mode, image, drawables, config, run_data):
+        # some coding ... LeKiwiDeBx [°}< Couak !!!
+        return procedure.new_return_values(Gimp.PDBStatusType.SUCCESS, GLib.Error())
+
+Gimp.main(css2gplPlugin.__gtype__, sys.argv)
+
+# if __name__ == "__main__":
+#     print(extract_comment("color:red; /* test */"))
