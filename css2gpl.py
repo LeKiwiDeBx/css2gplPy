@@ -3,14 +3,17 @@ import os
 import numpy as np
 import re
 import math
+'''
 from gi.repository import GLib
 from gi.repository import GimpUi
 from gi.repository import Gimp
+'''
 import sys
-
+'''
 import gi
 gi.require_version('Gimp', '3.0')
 gi.require_version('GimpUi', '3.0')
+'''
 
 
 IDlistNameColor = {
@@ -447,12 +450,14 @@ def loadfilecss(f):
     else:
         raise Exception("file name css unknown.")
 
+'''
 class css2gplPlugin(Gimp.Plugin):
     def run(self, procedure, run_mode, image, drawables, config, run_data):
         # some coding ... LeKiwiDeBx [°}< Couak !!!
         return procedure.new_return_values(Gimp.PDBStatusType.SUCCESS, GLib.Error())
 
 Gimp.main(css2gplPlugin.__gtype__, sys.argv)
+'''
 
 # if __name__ == "__main__":
 #     print(extract_comment("color:red; /* test */"))
