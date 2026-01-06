@@ -167,7 +167,9 @@ IDlistNameColor = {
     'yellowgreen': '9ACD32'
 }
 
-
+'''
+# extract comment at line end and trim left and right
+'''
 def extract_comment(line):
     pattern_comment = r';\s*/\*(.*)\*/'  # extract comment at line end
     match = re.search(pattern_comment, line)
@@ -226,15 +228,13 @@ def remainder(x, y):
 
 '''
 # Conversion valeur HSL à RGB
-# param: ligne en cours ddu fichier CSS
+# param: ligne en cours du fichier CSS
 # return: le format GPL de la couleur
 # sourcing:
 # + Converts HSL colorspace (Hue/Saturation/Value) to RGB colorspace.
 #         Formula from http://www.easyrgb.com/math.php?MATH=M19#text19
 # + un code source python ;)
 '''
-
-
 def hsl2Rgb(h, s, l):
 
     h = round(h / 360.0, 5)
@@ -255,7 +255,6 @@ def hsl2Rgb(h, s, l):
     sRgb = f"{r:.0f} {g:.0f} {b:.0f}"
     return sRgb.strip()
 
-
 '''
 # Sous-Routine de conversion valeur HSL à RGB appel de hsl2Rgb
 # param: traitemet pour obtenir HUE
@@ -266,8 +265,6 @@ def hsl2Rgb(h, s, l):
 # + NEW! Formula from https://www.easyrgb.com/en/math.php
 # + un code source python ;)
 '''
-
-
 def hue2rgb(var_1, var_2, h):
     h = h % 1
     while h < 0.0:
@@ -294,8 +291,6 @@ def hue2rgb(var_1, var_2, h):
 # param: ligne en cours du fichier CSS
 # return: le format GPL de la couleur
 '''
-
-
 def extractRgbHsl(line):
     # en CSS4 la virgule est facultative par exemple: rgb(R% G% B% / A)
     patternStrictRgb = r'(rgb)a?\(\s*(\d{1,3})%\s*,?\s*(\d{1,3})%\s*,?\s*(\d{1,3})%.*\)'
@@ -354,14 +349,14 @@ def extractRgbHsl(line):
     else:
         return ""
 
+'''
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # Conversion valeurs hexadecimales to RGB
 # param: code hexadecimal de la couleur
 # return: le format GPL de la couleur
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
+'''
 def hexa2rgb(hexa):
     rgb = []
     sRgb = ""
