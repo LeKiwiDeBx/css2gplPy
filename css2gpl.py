@@ -439,9 +439,9 @@ def loadfilecss(f):
             with open(f, "r") as fcss:
                 print(f"open file {f}\n")
                 """ gimp_message(f) # debug """
-        except IOError:
+        except IOError as e:
             raise Exception(
-                f"failed to open file {f}: {os.strerror(os.errno)}")
+                f"failed to open file {f}: {e}")
     else:
         raise Exception("file name css unknown.")
 
