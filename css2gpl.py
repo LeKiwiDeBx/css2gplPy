@@ -438,7 +438,7 @@ def loadfilecss(f):
         try:
             with open(f, "r") as fcss:
                 print(f"open file {f}\n")
-                gimp_message(f)
+                """ gimp_message(f) # debug """
         except IOError:
             raise Exception(
                 f"failed to open file {f}: {os.strerror(os.errno)}")
@@ -456,3 +456,34 @@ Gimp.main(css2gplPlugin.__gtype__, sys.argv)
 
 # if __name__ == "__main__":
 #     print(extract_comment("color:red; /* test */"))
+
+# Write a class named css2gpl to call in CLI with one prameter
+# the parameter is the css file path
+
+class css2gpl:
+
+    def __init__(self, css_file):
+        self.css_file = css_file
+
+    def process(self):
+        try:
+            with open(self.css_file, "r") as fcss:
+                print(f"Processing file: {self.css_file}\n")
+                """ for line in fcss:
+                    hexa = extract_hexa(line)
+                    if hexa:
+                        rgb = hexa2rgb(hexa)
+                        print(f"Hex: #{hexa} -> RGB: {rgb}") """
+        except IOError as e:
+            print(f"failed to open file {self.css_file}: {e}")
+
+ #   End of css2gpl class
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python css2gpl.py <css_file>")
+        sys.exit(1)
+
+    css_file = sys.argv[1]
+    converter = css2gpl(css_file)
+    converter.process()
+
