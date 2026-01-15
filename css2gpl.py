@@ -469,11 +469,14 @@ class css2gpl:
         try:
             with open(self.css_file, "r") as fcss:
                 print(f"Processing file: {self.css_file}\n")
-                """ for line in fcss:
-                    hexa = extract_hexa(line)
+                
+                for line in fcss:
+                    hexa = extract_hexa_list(line)
                     if hexa:
                         rgb = hexa2rgb(hexa)
-                        print(f"Hex: #{hexa} -> RGB: {rgb}") """
+                        print(f"Hex: #{hexa} -> RGB: {rgb}")
+                        # write doLineGPL equivalent 
+                        
         except IOError as e:
             print(f"failed to open file {self.css_file}: {e}")
 
