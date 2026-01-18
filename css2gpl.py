@@ -464,6 +464,62 @@ class css2gpl:
 
     def __init__(self, css_file):
         self.css_file = css_file
+    def doLineGPL(self, color, comment):
+            # Step 1: Remove leading zeros from numbers (e.g., "000 255 080" -> " 0 255 80")
+            # The regex (?:0{0,2})(\d+) matches 0, 1, or 2 zeros followed by digits.
+            # We replace it with a space followed by the captured digits ($1).
+            # re.sub is used with the pattern and replacement string.
+        color = re.sub(r'(?:0{0,2})(\d+)\s*', r' \1', color)
+            # Step 2: Remove leading and trailing whitespace
+            # .strip() is the Python equivalent of s/^\s+|\s+$//g
+        color = color.strip()
+            # Check if the color key does not exist in the dictionary
+        if color not in ColorComment:
+            # If it doesn't exist, create a new entry with the hex value and comment
+            ColorComment[color] = rgb2hexa(color) + " " + comment
+        else:
+            # If it exists, append the new comment to the existing value
+            ColorComment[color] += " " + comment
+        # Split the color string by whitespace to get r, g, b values
+        r, g, b = color.split()
+
+        # Reverse the IDlistNameColor dictionary to map hex codes to color names
+        # Note: This assumes IDlistNameColor is defined elsewhere in the code
+        rIDlistNameColor = {v: k for k, v in IDlistNameColor.items()}
+
+        # Convert the current color to hex format
+        hex_color = rgb2hexa(color)
+
+        # Check if the hex color exists in the reversed dictionary (i.e., is a named color)
+        if hex_color in rIDlistNameColor:
+            # Retrieve the existing comment for this color
+            comment_data = ColorComment[color]
+            
+            # Extract the hex code and the rest of the comment using regex
+            # Pattern: 6 hex digits followed by space and any characters
+            match = re.match(r'([0-9A-Fa-f]{6})\s(.*)', comment_data)
+            
+            if match:
+                extracted_hex = match.group(1)
+                extracted_comment = match.group(2)
+                color_name = rIDlistNameColor[hex_color]
+                
+                # Format the line: "R   G   B HEX NAME COMMENT"
+                # %-20s left-aligns the name in a 20-char field
+                # %-48.48s left-aligns and truncates the comment to 48 chars
+                line_gpl = "%3d %3d %3d %s %-20s %-48.48s" % (
+                    int(r), int(g), int(b), 
+                    extracted_hex, 
+                    color_name, 
+                    extracted_comment
+                )
+                return line_gpl
+        else:
+            # If it's not a named color, format the line: "R   G   B HEX COMMENT"
+            return "%3d %3d %3d %s" % (int(r), int(g), int(b), ColorComment[color])
+
+        return
+        
 
     def process(self):
         try:
@@ -476,7 +532,16 @@ class css2gpl:
                         rgb = hexa2rgb(hexa)
                         print(f"Hex: #{hexa} -> RGB: {rgb}")
                         # write doLineGPL equivalent 
-                        
+                    if extractRgbHsl(line) != '':
+                        rgb_hsl = extractRgbHsl(line)
+                        print(f"Extracted RGB/HSL to RGB: {rgb_hsl}")
+                    color_names = extract_color_named(line)
+                    if color_names:
+                        for color_name in color_names:
+                            print(f"Extracted color name: {color_name}")
+                            rgb = color_name2rgb(color_name)
+                            print(f"Color name: {color_name} -> RGB: {rgb}")
+                       
         except IOError as e:
             print(f"failed to open file {self.css_file}: {e}")
 
